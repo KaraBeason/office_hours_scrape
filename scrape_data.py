@@ -1,0 +1,97 @@
+import urllib.request as urlreq
+from bs4 import BeautifulSoup as bs
+import re
+import MySQLdb
+
+def get_faculty_info(url):
+    url_html = urlreq.urlopen(url)
+    page_soup = bs(url_html, 'html.parser')
+    email = get_email(page_soup)
+    # print(email)
+    # location = get_office(page_soup)
+    # print(location)
+
+
+def get_email(soup):
+    for a in soup.find_all('a'):
+        if a and a.get('href') and "@" in a.get('href'):
+            return a.get('href').split(":")[1]
+    return "no email listed"
+
+
+# def get_office(page_soup):
+    # for element in page_soup.select('span.contact'):
+        # print(element.text)
+
+
+# url to scrape
+cs_faculty = 'https://compsci.appstate.edu/faculty-staff'
+
+# get the html
+page = urlreq.urlopen(cs_faculty)
+
+# parse using beautiful soup
+soup = bs(page, 'html.parser')
+faculty_sites = []
+for link in soup.find_all('a'):
+    faculty_sites.append(link.get('href'))
+
+#  get all faculty web pages
+faculty_sites[:] = (url for url in faculty_sites if url and url.startswith('http://cs.appstate.edu/~'))
+
+# print(faculty_sites)
+for f in faculty_sites:
+    get_faculty_info(f)
+
+math_faculty ='https://mathsci.appstate.edu/OfficeHours'
+page = urlreq.urlopen(math_faculty)
+soup = bs(page, 'html.parser')
+
+
+table = soup.find('table')
+rows = []
+for row in table.findChildren('tr'):
+    if len(row.find_parents('tr')) == 0:
+        rows.append(row)
+rows.pop(0)
+
+
+contact_list = []
+for row in rows:
+    contact = []
+    cells = row.findChildren('td')
+    if len(cells) >= 4:
+        for  i in range(0, 4):
+            cell_content = cells[i].getText()
+            clean_content = re.sub( '\s+', ' ', cell_content).strip()
+            contact.append(clean_content)
+    contact_list.append(contact)
+# print(contact_list)
+
+
+def create_faculty_members(contact):
+    # MySql configs
+    db = MySQLdb.connect(host="localhost",
+                         user="kara",
+                         passwd="admin",
+                         db="OfficeHours")
+    cursor = db.cursor()
+    _name = contact[0]
+    _email = contact[1]
+    _phone = contact[2]
+    _office = contact[3]
+    # _hours = d[4]
+    # cursor.callproc('sp_createFacultyMember',(_name, _email, _phone, _office))
+    cursor.execute("SELECT * FROM tbl_user")
+
+    # print the first and second columns
+    for row in cursor.fetchall():
+        print(row)
+    cursor.close()
+        # conn.close()
+
+for c in contact_list:
+    create_faculty_members(c)
+
+
+
