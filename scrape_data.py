@@ -61,15 +61,22 @@ rows.pop(0)
 contact_list = []
 for row in rows:
     contact = []
+    # some extra bs because wtf is this table formatting for?
     cells = row.findChildren('td')
     if len(cells) >= 4:
         for  i in range(0, 4):
             cell_content = cells[i].getText()
             clean_content = re.sub( '\s+', ' ', cell_content).strip()
             contact.append(clean_content)
-    contact_list.append(contact)
+        temp = []
+        for i in range(4, len(cells)):
+            cell_content = cells[i].getText()
+            clean_content = re.sub( '\s+', ' ', cell_content).strip()
+            temp.append(clean_content)
+        office_hours = ', '.join(set(temp)) # get rid of duplicates, join all office hours into one string
+        contact.append(office_hours)
+        contact_list.append(contact)
 # print(contact_list)
-
 
 def create_faculty_members(contact):
     # MySql configs
@@ -91,8 +98,11 @@ def create_faculty_members(contact):
         _email = contact[1]
         _phone = contact[2]
         _office = contact[3]
+        _department = "math"
+        _office_hours = contact[4]
         # _hours = d[4]
-        cursor.callproc('sp_createFacultyMember',(_name, _email, _phone, _office))
+        cursor.callproc('sp_createFacultyMember',(_name, _email, _phone, _office, _department, _office_hours))
+        conn.commit()
         # cursor.execute("SELECT * FROM tbl_user")
 
         # print the first and second columns

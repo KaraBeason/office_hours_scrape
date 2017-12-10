@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Who's Here?  Math Department</title>
+
+
+    <link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link href="http://getbootstrap.com/examples/jumbotron-narrow/jumbotron-narrow.css" rel="stylesheet">
+    <!--<link href="../static/css/dropdown.css" rel="stylesheet">-->
+    <!--<script src="../static/js/jquery-3.2.1.js"></script>-->
+    <!--<script src="../static/js/dropdown.js"></script>-->
+
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="header">
+            <nav>
+                <ul class="list-inline">
+                    <li><a href="/">Home</a>
+                    <a href="/SignIn">Sign In</a>
+                    <a href="showSignUp">Sign Up</a>
+                    </li>
+                </ul>
+            </nav>
+            <h3 class="text-muted">All of your Office Hours in One Place</h3>
+        </div>
+
+        <div class="jumbotron">
+        <h1>Math Department</h1> <br/>
+        <br> <table border="1" cellpadding="5" cellspacing="5">
+        <tr> <th>Name</th> <th>E-mail</th> <th>Phone</th> <th>Office</th><th>Office Hours</th><th>Status</th></tr>
+            {% for row in data %}
+            <tr>
+                <td>{{ row[1] }}</td>
+                <td>{{ row[0] }}</td>
+                <td>{{ row[7] }}</td>
+                <td>{{ row[5] }}</td>
+                <td>{{ row[3] }}</td>
+                <td>{{ row[2] }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        </table>
+        </div>
+
+        <footer class="footer">
+            <p>&copy; 2017 Kara Beason, World's Okayest Python Developer</p>
+        </footer>
+
+    </div>
+</body>
+
+</html>
+
+
+
+

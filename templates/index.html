@@ -8,7 +8,9 @@
     <link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <link href="http://getbootstrap.com/examples/jumbotron-narrow/jumbotron-narrow.css" rel="stylesheet">
-
+    <link href="../static/css/dropdown.css" rel="stylesheet">
+    <script src="../static/js/jquery-3.2.1.js"></script>
+    <script src="../static/js/dropdown.js"></script>
 
 </head>
 
@@ -16,17 +18,15 @@
 
     <div class="container">
         <div class="header">
-            <nav>
-                <ul class="nav nav-pills pull-right">
-                    <li role="presentation" class="active"><a href="/">Home</a>
-                    </li>
-                    <li role="presentation"><a href="#">Sign In</a>
-                    </li>
-                    <li role="presentation"><a href="showSignUp">Sign Up</a>
+             <nav>
+                <ul class="list-inline">
+                    <li>
+                    <a href="/SignIn">Sign In</a>
+                    <a href="showSignUp">Sign Up</a>
                     </li>
                 </ul>
             </nav>
-            <h3 class="text-muted">All of your Office Hours in One Place</h3>
+        <h3 class="text-muted">All of your Office Hours in One Place</h3>
         </div>
 
         <div class="jumbotron">
@@ -34,12 +34,36 @@
             <p class="lead"></p>
             <p><a class="btn btn-lg btn-success" href="showSignUp" role="button">Sign up today</a>
             </p>
-        </div>
-
-        <div class="row marketing">
+            <div class="row marketing">
             <div class="col-lg-6">
-                <h4>Currenly In Office</h4>
-                <p>Donec id elit non mi porta gravida at eget metus. Maecenas faucibus mollis interdum.</p>
+               <div class="jumbotron">
+                <h4>Currently In Office</h4> <br/>
+                <br> <table border="1" cellpadding="5" cellspacing="5">
+                <tr> <th>Name</th> <th>E-mail</th> <th>Phone</th> <th>Office</th><th>Office Hours</th><th>Status</th></tr>
+                    {% for row in data %}
+                    <tr>
+                        <td>{{ row[1] }}</td>
+                        <td>{{ row[0] }}</td>
+                        <td>{{ row[7] }}</td>
+                        <td>{{ row[5] }}</td>
+                        <td>{{ row[3] }}</td>
+                        <td>{{ row[2] }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+                </table>
+                </div>
+
+        </div>
+            </div>
+        <div class="dropdown">
+          <button onclick="myFunction()" class="dropbtn">Department</button>
+          <div id="myDropdown" class="dropdown-content">
+            <a href="/showMathDep">Math</a>
+            <a href="/ComputerScience">Computer Science</a>
+            <a href="/Other">Other</a>
+          </div>
+        </div>
 
                 <h4>Office Hours Currently Ongoing</h4>
                 <p>Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Cras mattis consectetur purus sit amet fermentum.</p>
