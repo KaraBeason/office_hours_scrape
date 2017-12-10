@@ -1,7 +1,9 @@
 import urllib.request as urlreq
 from bs4 import BeautifulSoup as bs
 import re
-import MySQLdb
+import mysql.connector
+from mysql.connector import errorcode
+
 
 def get_faculty_info(url):
     url_html = urlreq.urlopen(url)
@@ -71,24 +73,33 @@ for row in rows:
 
 def create_faculty_members(contact):
     # MySql configs
-    db = MySQLdb.connect(host="localhost",
-                         user="kara",
-                         passwd="admin",
-                         db="OfficeHours")
-    cursor = db.cursor()
-    _name = contact[0]
-    _email = contact[1]
-    _phone = contact[2]
-    _office = contact[3]
-    # _hours = d[4]
-    # cursor.callproc('sp_createFacultyMember',(_name, _email, _phone, _office))
-    cursor.execute("SELECT * FROM tbl_user")
 
-    # print the first and second columns
-    for row in cursor.fetchall():
-        print(row)
-    cursor.close()
-        # conn.close()
+    try:
+        conn = mysql.connector.connect(user='kara', password='admin',
+                                   host='127.0.0.1',
+                                   database='officehours')
+    except mysql.connector.Error as err:
+        if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
+            print("Something is wrong with your user name or password")
+        elif err.errno == errorcode.ER_BAD_DB_ERROR:
+            print("Database does not exist")
+        else:
+            print(err)
+    else:
+        cursor = conn.cursor()
+        _name = contact[0]
+        _email = contact[1]
+        _phone = contact[2]
+        _office = contact[3]
+        # _hours = d[4]
+        cursor.callproc('sp_createFacultyMember',(_name, _email, _phone, _office))
+        # cursor.execute("SELECT * FROM tbl_user")
+
+        # print the first and second columns
+        # for row in cursor.fetchall():
+        #     print(row)
+        cursor.close()
+        conn.close()
 
 for c in contact_list:
     create_faculty_members(c)
