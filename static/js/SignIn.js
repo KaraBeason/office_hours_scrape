@@ -1,14 +1,13 @@
 $(function() {
-    $('#btnSignUp').click(function() {
+    $('#btnSignIn').click(function() {
 
         $.ajax({
-            url: '/signUp',
+            url: '/signIn',
             data: $('form').serialize(),
             type: 'POST',
             success: function(response) {
                 console.log(response);
                 window.location = "/dashboard";
-
             },
             error: function(error) {
                 console.log(error);

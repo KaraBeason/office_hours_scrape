@@ -99,9 +99,10 @@ def create_faculty_members(contact):
         _phone = contact[2]
         _office = contact[3]
         _department = "math"
+        _user_type = "teacher"
         _office_hours = contact[4]
         # _hours = d[4]
-        cursor.callproc('sp_createFacultyMember',(_name, _email, _phone, _office, _department, _office_hours))
+        cursor.callproc('sp_createFacultyMember',(_name, _email, _phone, _office, _department, _office_hours, _user_type))
         conn.commit()
         # cursor.execute("SELECT * FROM tbl_user")
 

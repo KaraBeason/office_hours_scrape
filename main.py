@@ -1,4 +1,4 @@
-from flask import Flask, json, render_template, request
+from flask import *
 from flaskext.mysql import MySQL
 
 app = Flask(__name__)
@@ -33,6 +33,40 @@ def main():
     return render_template('index.html', data=data)
 
 
+@app.route('/dashboard')
+def dashboard():
+    return render_template('dashboard.html')
+
+
+@app.route('/showSignIn')
+def showSignIn():
+    return render_template('signIn.html')
+
+
+@app.route('/signIn', methods=['POST'])
+def signIn():
+    try:
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        _email = request.form['inputEmail']
+        _password = request.form['inputPassword']
+        if _email and _password:
+            # cursor.callproc('sp_createUser', (_accountType, _name, _email, _password))
+            cursor.execute("select * from tbl_user where user_id = %s and password = %s", (_email, _password))
+            data = cursor.fetchall()
+            if len(data) is 0:
+                conn.commit()
+                return redirect(url_for('dashboard'))
+            else:
+                return json.dumps({'error': str(data[0])})
+        else:
+            return json.dumps({'html': '<span>User not found.</span'})
+    except Exception as e:
+        return json.dumps({'error': str(e)})
+    finally:
+        cursor.close()
+        conn.close()
+
 @app.route('/showSignUp')
 def showSignUp():
     return render_template('signup.html')
@@ -41,17 +75,18 @@ def showSignUp():
 @app.route('/signUp', methods=['POST'])
 def signUp():
     try:
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        _accountType = request.form['accountType']
         _name = request.form['inputName']
         _email = request.form['inputEmail']
         _password = request.form['inputPassword']
         if _name and _email and _password:
-            conn = mysql.connect()
-            cursor = conn.cursor()
-            cursor.callproc('sp_createUser', (_name, _email, _password))
+            cursor.callproc('sp_createUser', (_accountType, _name, _email, _password))
             data = cursor.fetchall()
             if len(data) is 0:
                 conn.commit()
-                return json.dumps({'html': '<span>Information validated.</span>'})
+                return redirect(url_for('dashboard'))
             else:
                 return json.dumps({'error': str(data[0])})
         else:
